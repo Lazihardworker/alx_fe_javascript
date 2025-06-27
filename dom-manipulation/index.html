@@ -1,29 +1,28 @@
 <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Quote Generator</title>
-    <link rel="stylesheet" href="qoutegenerator.css">
-    <script src="script.js"></script>
-  </head>
-  <body>
-    <h1>Dynamic Quote Generator</h1>
-    <label for="categorySelect">Choose a category:</label>
-    <select id="categorySelect">
-     <option value="all">All</option>
-    </select>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dynamic Quote Generator</title>
+</head>
+<body>
+  <h1>Dynamic Quote Generator</h1>
 
-   <select id="categorySelect">
-      <option value="all">All</option>
-    </select>
-    <div id="quoteDisplay">Click "Show New Quote" to get started!</div>
-    <button id="newQuote">Show New Quote</button>
+  <div>
+    <label for="categorySelect">Choose Category:</label>
+    <select id="categorySelect"></select>
+  </div>
 
-    <h3>Add a New Quote</h3>
+  <div id="quoteDisplay" style="margin: 20px 0; font-size: 1.2em;"></div>
+  <button id="newQuote">Show New Quote</button>
+
+  <h2>Add a New Quote</h2>
+  <div>
     <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
     <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button onclick="addQuote()">Add Quote</button>
-    
-  </body>
-  </html>
+    <button id="addQuoteBtn">Add Quote</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
