@@ -15,4 +15,6 @@
       margin-top: 0.5rem;
       margin-right: 0.5rem;
     }
-    
+    .div quoteDisplay{
+        margin: 20px 0; font-size: 1.2em;
+    }
