@@ -99,5 +99,34 @@ document.addEventListener("DOMContentLoaded", () => {
 newQuoteBtn.addEventListener("click", showRandomQuote);
 addQuoteBtn.addEventListener("click", addQuote);
 
+function addQuote() {
+  const text = newQuoteText.value.trim();
+  const category = newQuoteCategory.value.trim();
+
+  if (!text || !category) {
+    alert("Please enter both a quote and a category.");
+    return;
+  }
+
+  // Push new quote to array
+  quotes.push({ text, category });
+
+  // Save updated array
+  saveQuotes();
+
+  // Update category dropdown
+  populateCategories();
+
+  // Clear input fields
+  newQuoteText.value = "";
+  newQuoteCategory.value = "";
+
+  alert("Quote added successfully!");
+
+  // Select new category & show new quote
+  categorySelect.value = category;
+  showRandomQuote();
+}
+
 
 
