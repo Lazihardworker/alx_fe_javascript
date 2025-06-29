@@ -1,5 +1,6 @@
 const STORAGE_KEY = "quotes";
 const SELECTED_CATEGORY_KEY = "selectedCategory";
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
 
 let quotes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
@@ -100,67 +101,4 @@ function createAddQuoteForm() {
   addButton.textContent = "Add Quote";
 
   formContainer.appendChild(quoteLabel);
-  formContainer.appendChild(quoteInput);
-  formContainer.appendChild(categoryLabel);
-  formContainer.appendChild(categoryInput);
-  formContainer.appendChild(addButton);
-
-  addButton.addEventListener("click", addQuote);
 }
-
-function exportToJsonFile() {
-  const dataStr = JSON.stringify(quotes, null, 2);
-  const blob = new Blob([dataStr], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "quotes.json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
-function importFromJsonFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const importedQuotes = JSON.parse(e.target.result);
-      if (Array.isArray(importedQuotes)) {
-        quotes.push(...importedQuotes);
-        saveQuotes();
-        populateCategories();
-        alert("Quotes imported successfully!");
-      } else {
-        alert("Invalid JSON format.");
-      }
-    } catch (err) {
-      alert("Error parsing JSON file.");
-    }
-  };
-  reader.readAsText(file);
-}
-
-function restoreSelectedCategory() {
-  const savedCategory = localStorage.getItem(SELECTED_CATEGORY_KEY);
-  if (savedCategory && [...categoryFilter.options].some(option => option.value === savedCategory)) {
-    categoryFilter.value = savedCategory;
-  } else {
-    categoryFilter.value = "all";
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  populateCategories();
-  restoreSelectedCategory();
-  createAddQuoteForm();
-  filterQuotes();
-});
-
-categoryFilter.addEventListener("change", filterQuotes);
-newQuoteBtn.addEventListener("click", showRandomQuote);
-exportQuotesBtn.addEventListener("click", exportToJsonFile);
-importFileInput.addEventListener("change", importFromJsonFile);
