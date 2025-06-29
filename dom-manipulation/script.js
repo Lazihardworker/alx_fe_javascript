@@ -220,3 +220,4 @@ categoryFilter.addEventListener("change", filterQuotes);
 newQuoteBtn.addEventListener("click", showRandomQuote);
 exportQuotesBtn.addEventListener("click", exportToJsonFile);
 importFileInput.addEventListener("change", importFromJsonFile);
+
