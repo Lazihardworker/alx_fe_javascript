@@ -62,7 +62,8 @@ function addQuote() {
     return;
   }
 
-  quotes.push({ text, category });
+  const newQuote = { text, category };
+  quotes.push(newQuote);
   saveQuotes();
   populateCategories();
 
@@ -74,7 +75,7 @@ function addQuote() {
   categoryFilter.value = category;
   filterQuotes();
 
-  postQuoteToServer({ text, category });
+  postQuoteToServer(newQuote);
 }
 
 function createAddQuoteForm() {
@@ -160,7 +161,6 @@ async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_URL);
     const data = await response.json();
-    // Simulate using first 5 posts
     return data.slice(0, 5).map(post => ({
       text: post.title,
       category: post.body.substring(0, 20) || "General"
@@ -181,7 +181,7 @@ async function postQuoteToServer(quote) {
         userId: 1
       }),
       headers: {
-        "Content-type": "application/json; charset=UTF-8"
+        "Content-Type": "application/json; charset=UTF-8"
       }
     });
   } catch (error) {
