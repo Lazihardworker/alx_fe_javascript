@@ -200,9 +200,10 @@ async function syncQuotes() {
     saveQuotes();
     populateCategories();
     filterQuotes();
-    showNotification("Local data updated from server (conflict resolved).");
+    showNotification("Quotes synced with server!");
   }
 }
+
 
 function showNotification(message) {
   alert(message);
