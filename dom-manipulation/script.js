@@ -73,6 +73,8 @@ function addQuote() {
 
   categoryFilter.value = category;
   filterQuotes();
+
+  postQuoteToServer({ text, category });
 }
 
 function createAddQuoteForm() {
@@ -101,4 +103,120 @@ function createAddQuoteForm() {
   addButton.textContent = "Add Quote";
 
   formContainer.appendChild(quoteLabel);
+  formContainer.appendChild(quoteInput);
+  formContainer.appendChild(categoryLabel);
+  formContainer.appendChild(categoryInput);
+  formContainer.appendChild(addButton);
+
+  addButton.addEventListener("click", addQuote);
 }
+
+function exportToJsonFile() {
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function importFromJsonFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+      if (Array.isArray(importedQuotes)) {
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        populateCategories();
+        alert("Quotes imported successfully!");
+      } else {
+        alert("Invalid JSON format.");
+      }
+    } catch (err) {
+      alert("Error parsing JSON file.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function restoreSelectedCategory() {
+  const savedCategory = localStorage.getItem(SELECTED_CATEGORY_KEY);
+  if (savedCategory && [...categoryFilter.options].some(option => option.value === savedCategory)) {
+    categoryFilter.value = savedCategory;
+  } else {
+    categoryFilter.value = "all";
+  }
+}
+
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const data = await response.json();
+    // Simulate using first 5 posts
+    return data.slice(0, 5).map(post => ({
+      text: post.title,
+      category: post.body.substring(0, 20) || "General"
+    }));
+  } catch (error) {
+    console.error("Error fetching from server:", error);
+    return [];
+  }
+}
+
+async function postQuoteToServer(quote) {
+  try {
+    await fetch(SERVER_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        title: quote.text,
+        body: quote.category,
+        userId: 1
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    });
+  } catch (error) {
+    console.error("Error posting to server:", error);
+  }
+}
+
+async function syncQuotes() {
+  const serverQuotes = await fetchQuotesFromServer();
+
+  const localDataString = JSON.stringify(quotes.map(q => q.text + q.category).sort());
+  const serverDataString = JSON.stringify(serverQuotes.map(q => q.text + q.category).sort());
+
+  if (localDataString !== serverDataString) {
+    quotes = serverQuotes;
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+    showNotification("Local data updated from server (conflict resolved).");
+  }
+}
+
+function showNotification(message) {
+  alert(message);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  populateCategories();
+  restoreSelectedCategory();
+  createAddQuoteForm();
+  filterQuotes();
+  setInterval(syncQuotes, 30000);
+});
+
+categoryFilter.addEventListener("change", filterQuotes);
+newQuoteBtn.addEventListener("click", showRandomQuote);
+exportQuotesBtn.addEventListener("click", exportToJsonFile);
+importFileInput.addEventListener("change", importFromJsonFile);
